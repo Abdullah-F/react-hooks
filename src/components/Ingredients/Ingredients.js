@@ -12,6 +12,9 @@ function Ingredients() {
       { id: Math.random().toString(), ...ingredient }
     ]);
   };
+  const removeIngredientHandler = id => {
+    setIngredients([...ingredients.filter(ingredient => ingredient.id !== id)]);
+  };
 
   return (
     <div className="App">
@@ -19,7 +22,10 @@ function Ingredients() {
 
       <section>
         <Search />
-        <IngredientList ingredients={ingredients} onRemoveItem={() => {}} />
+        <IngredientList
+          ingredients={ingredients}
+          onRemoveItem={removeIngredientHandler}
+        />
       </section>
     </div>
   );

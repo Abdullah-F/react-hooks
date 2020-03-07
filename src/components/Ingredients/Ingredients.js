@@ -13,7 +13,9 @@ function Ingredients() {
     ]);
   };
   const removeIngredientHandler = id => {
-    setIngredients([...ingredients.filter(ingredient => ingredient.id !== id)]);
+    setIngredients(prevIngredients => [
+      ...prevIngredients.filter(ingredient => ingredient.id !== id)
+    ]);
   };
 
   return (

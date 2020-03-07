@@ -1,8 +1,9 @@
-import React from 'react';
+import React from "react";
 
-import './IngredientList.css';
+import "./IngredientList.css";
 
 const IngredientList = props => {
+  console.log("[FROM INGREDIENT LIST]", props.ingredients);
   return (
     <section className="ingredient-list">
       <h2>Loaded Ingredients</h2>

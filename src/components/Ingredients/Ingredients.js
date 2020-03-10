@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useCallback } from "react";
 import IngredientList from "./IngredientList";
 import IngredientForm from "./IngredientForm";
 import Search from "./Search";
@@ -6,22 +6,8 @@ import Search from "./Search";
 function Ingredients() {
   const [ingredients, setIngredients] = useState([]);
 
-  useEffect(() => {
-    fetch("https://react-hooks-f8a9d.firebaseio.com/ingredients.json")
-      .then(resposnse => resposnse.json())
-      .then(responseData => {
-        console.log("[RESPONSE DATA]", responseData);
-        const loadedIngredients = [];
-        for (const key in responseData) {
-          loadedIngredients.push({
-            id: key,
-            amount: responseData[key].amount,
-            title: responseData[key].title
-          });
-        }
-        console.log("[FROM USE EFFECT]", loadedIngredients);
-        setIngredients(loadedIngredients);
-      });
+  const filteredIngredientsHandler = useCallback(filteredIngredients => {
+    setIngredients(filteredIngredients);
   }, []);
 
   const addIngredientHandler = ingredient => {
@@ -52,7 +38,7 @@ function Ingredients() {
       <IngredientForm onAddIngredient={addIngredientHandler} />
 
       <section>
-        <Search />
+        <Search onLoadIngredients={filteredIngredientsHandler} />
         <IngredientList
           ingredients={ingredients}
           onRemoveItem={removeIngredientHandler}

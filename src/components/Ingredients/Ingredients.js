@@ -3,23 +3,43 @@ import IngredientList from "./IngredientList";
 import IngredientForm from "./IngredientForm";
 import Search from "./Search";
 import ErrorModal from "../UI/ErrorModal";
+
+const ingredientReducer = (currentIngredients, action) => {
+  switch (action.type) {
+    case "SET":
+      return action.ingredients;
+    case "ADD":
+      return [...currentIngredients, action.ingredient];
+    case "DELETE":
+      return currentIngredients.filter(cing => cing.id !== action.id);
+    default:
+      throw new Error(" you must handle something");
+  }
+};
+
+const httpReducer = (httpState, action) => {
+  switch (action.type) {
+    case "SEND":
+      return { loading: true, error: null };
+    case "RESPONSE":
+      return { ...httpState, loading: false };
+    case "ERROR":
+      return { loading: false, error: action.errorMessage };
+    case "CLEAR":
+      return { ...httpState, error: null };
+    default:
+      throw new Error(" you must handle something");
+  }
+};
 function Ingredients() {
-  const ingredientReducer = (currentIngredients, action) => {
-    switch (action.type) {
-      case "SET":
-        return action.ingredients;
-      case "ADD":
-        return [...currentIngredients, action.ingredient];
-      case "DELETE":
-        return currentIngredients.filter(cing => cing.id !== action.id);
-      default:
-        throw new Error(" you must handle something");
-    }
-  };
   const [ingredients, dispatch] = useReducer(ingredientReducer, []);
+  const [httpState, dispatchHttp] = useReducer(httpReducer, {
+    loading: false,
+    error: null
+  });
   //const [ingredients, setIngredients] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState();
+  //  const [isLoading, setIsLoading] = useState(false);
+  //  const [error, setError] = useState();
 
   const filteredIngredientsHandler = useCallback(filteredIngredients => {
     //setIngredients(filteredIngredients);
@@ -27,14 +47,14 @@ function Ingredients() {
   }, []);
 
   const addIngredientHandler = ingredient => {
-    setIsLoading(true);
+    dispatchHttp({ type: "SEND" });
     fetch("https://react-hooks-f8a9d.firebaseio.com/ingredients.json", {
       method: "POST",
       body: JSON.stringify(ingredient),
       headers: { "Content-Type": "application/json" }
     })
       .then(resposnse => {
-        setIsLoading(false);
+        dispatchHttp({ type: "RESPONSE" });
         return resposnse.json();
       })
       .then(responseData => {
@@ -50,32 +70,36 @@ function Ingredients() {
   };
 
   const removeIngredientHandler = id => {
-    setIsLoading(true);
+    dispatchHttp({ type: "SEND" });
     fetch(`https://react-hooks-f8a9d.firebaseio.com/ingredients/${id}.json`, {
       method: "DELETE"
     })
       .then(response => {
-        setIsLoading(false);
+        dispatchHttp({ type: "RESPONSE" });
         //        setIngredients(prevIngredients => [
         //          ...prevIngredients.filter(ingredient => ingredient.id !== id)
         //        ]);
         dispatch({ type: "DELETE", id: id });
       })
       .catch(error => {
-        setError(error.message);
+        dispatchHttp({ type: "ERROR", errorMessage: "something went wrong" });
+        //setError(error.message);
       });
   };
 
   const clearError = () => {
-    setError(null);
-    setIsLoading(false);
+    dispatchHttp({ type: "CLEAR" });
+    //    setError(null);
+    //  setIsLoading(false);
   };
   return (
     <div className="App">
-      {error && <ErrorModal onClose={clearError}> {error} </ErrorModal>}
+      {httpState.error && (
+        <ErrorModal onClose={clearError}> {httpState.error} </ErrorModal>
+      )}
       <IngredientForm
         onAddIngredient={addIngredientHandler}
-        loading={isLoading}
+        loading={httpState.loading}
       />
 
       <section>

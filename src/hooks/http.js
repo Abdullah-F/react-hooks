@@ -1,4 +1,12 @@
 import { useReducer, useCallback } from "react";
+
+const initialState = {
+  loading: null,
+  error: null,
+  data: null,
+  extra: null,
+  identifier: null
+};
 const httpReducer = (httpState, action) => {
   switch (action.type) {
     case "SEND":
@@ -23,19 +31,27 @@ const httpReducer = (httpState, action) => {
         extra: null
       };
     case "CLEAR":
-      return { ...httpState, error: null };
+      return { ...httpState, error: null, loading: false };
     default:
       throw new Error(" you must handle something");
   }
 };
 const useHttp = () => {
-  const [httpState, dispatchHttp] = useReducer(httpReducer, {
-    loading: false,
-    error: null,
-    data: null,
-    extra: null,
-    identifier: null
-  });
+  const [httpState, dispatchHttp] = useReducer(
+    httpReducer,
+    {
+      loading: false,
+      error: null,
+      data: null,
+      extra: null,
+      identifier: null
+    },
+    initialState
+  );
+
+  const clear = () => {
+    dispatchHttp({ type: "CLEAR" });
+  };
   const sendRequest = useCallback((url, method, body, extra, identifier) => {
     dispatchHttp({ type: "SEND", identifier: identifier });
     fetch(url, {
@@ -64,7 +80,8 @@ const useHttp = () => {
     data: httpState.data,
     sendRequest: sendRequest,
     extra: httpState.extra,
-    identifier: httpState.identifier
+    identifier: httpState.identifier,
+    clear: clear
   };
 };
 

@@ -44,35 +44,18 @@ function Ingredients() {
     }
   }, [data, extra, identifier, isLoading, error]);
 
-  const addIngredientHandler = useCallback(ingredient => {
-    sendRequest(
-      "https://react-hooks-f8a9d.firebaseio.com/ingredients.json",
-      "POST",
-      JSON.stringify(ingredient),
-      ingredient,
-      "ADD_INGREDIENT"
-    );
-    // //   dispatchHttp({ type: "SEND" });
-    //    fetch("https://react-hooks-f8a9d.firebaseio.com/ingredients.json", {
-    //      method: "POST",
-    //      body: JSON.stringify(ingredient),
-    //      headers: { "Content-Type": "application/json" }
-    //    })
-    //      .then(resposnse => {
-    ////        dispatchHttp({ type: "RESPONSE" });
-    //        return resposnse.json();
-    //      })
-    //      .then(responseData => {
-    //        //        setIngredients(prevIngredients => [
-    //        //          ...prevIngredients,
-    //        //          { id: responseData.name, ...ingredient }
-    //        //        ]);
-    //        dispatch({
-    //          type: "ADD",
-    //          ingredient: { id: responseData.name, ...ingredient }
-    //        });
-    //      });
-  }, []);
+  const addIngredientHandler = useCallback(
+    ingredient => {
+      sendRequest(
+        "https://react-hooks-f8a9d.firebaseio.com/ingredients.json",
+        "POST",
+        JSON.stringify(ingredient),
+        ingredient,
+        "ADD_INGREDIENT"
+      );
+    },
+    [sendRequest]
+  );
 
   const removeIngredientHandler = useCallback(
     id => {
@@ -88,11 +71,7 @@ function Ingredients() {
     [sendRequest]
   );
 
-  const clearError = () => {
-    //   dispatchHttp({ type: "CLEAR" });
-    //    setError(null);
-    //  setIsLoading(false);
-  };
+  const clearError = () => {};
 
   const ingredientList = useMemo(() => {
     return (

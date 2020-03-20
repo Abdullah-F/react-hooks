@@ -37,17 +37,7 @@ const httpReducer = (httpState, action) => {
   }
 };
 const useHttp = () => {
-  const [httpState, dispatchHttp] = useReducer(
-    httpReducer,
-    {
-      loading: false,
-      error: null,
-      data: null,
-      extra: null,
-      identifier: null
-    },
-    initialState
-  );
+  const [httpState, dispatchHttp] = useReducer(httpReducer, initialState);
 
   const clear = () => {
     dispatchHttp({ type: "CLEAR" });
@@ -69,8 +59,7 @@ const useHttp = () => {
         dispatchHttp({ type: "RESPONSE", data: responseData, extra: extra });
       })
       .catch(error => {
-        dispatchHttp({ type: "ERROR", errorMessage: "something went wrong" });
-        //setError(error.message);
+        dispatchHttp({ type: "ERROR", errorMessage: error.message });
       });
   }, []);
 
